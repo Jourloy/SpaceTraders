@@ -1,11 +1,15 @@
 package location
 
+type LocationBody struct {
+	Data Location
+}
+
 type Location struct {
 	SystemSymbol string    `json:"systemSymbol"`
 	Symbol       string    `json:"symbol"`
 	Type         string    `json:"type"`
 	X            int       `json:"x"`
-	Y            string    `json:"y"`
+	Y            int       `json:"y"`
 	Orbitals     []Orbital `json:"orbitals"`
 	Traits       []Trait   `json:"traits"`
 	Chart        Chart     `json:"chart"`

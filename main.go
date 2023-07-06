@@ -2,6 +2,7 @@ package main
 
 import (
 	"SpaceTradersAgent/internal/sdk/agent"
+	"SpaceTradersAgent/internal/sdk/location"
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -52,7 +53,7 @@ var (
 	highlightColor    = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
 	inactiveTabStyle  = lipgloss.NewStyle().Border(inactiveTabBorder, true).BorderForeground(highlightColor).Padding(0, 1)
 	activeTabStyle    = inactiveTabStyle.Copy().Border(activeTabBorder, true)
-	windowStyle       = lipgloss.NewStyle().BorderForeground(highlightColor).Padding(2, 0).Align(lipgloss.Center).Border(lipgloss.NormalBorder()).UnsetBorderTop()
+	windowStyle       = lipgloss.NewStyle().BorderForeground(highlightColor).Padding(0, 0).Align(lipgloss.Left).Border(lipgloss.NormalBorder()).UnsetBorderTop()
 )
 
 func (m model) View() string {
@@ -90,13 +91,19 @@ func (m model) View() string {
 }
 
 func main() {
-	tabs := []string{"Agent", "Ships", "Contracts", "Systems"}
+	tabs := []string{"Agent", "Location", "Contracts", "Systems"}
 
 	agentData := agent.GetAgent()
+	agentString := fmt.Sprintf("Symbol: %s\n", agentData.Symbol)
+	agentString += fmt.Sprintf("Credits: %d\n", agentData.Credits)
+	agentString += fmt.Sprintf("Headquarters: %s", agentData.Headquarters)
 
-	agentString := fmt.Sprintf("Symbol: %s\nCredits: %d\nHeadquarters: %s", agentData.Symbol, agentData.Credits, agentData.Headquarters)
+	locationData := location.GetLocation(agentData.Headquarters)
+	locationString := fmt.Sprintf("Symbol: %s\n", locationData.Symbol)
+	locationString += fmt.Sprintf("Type: %s", locationData.Type)
+	locationString += fmt.Sprintf("Fraction: %s", locationData.Faction.Symbol)
 
-	tabContent := []string{agentString, "Blush Tab", "Eye Shadow Tab", "Mascara Tab", "Foundation Tab"}
+	tabContent := []string{agentString, locationString, "Eye Shadow Tab", "Mascara Tab", "Foundation Tab"}
 	m := model{Tabs: tabs, TabContent: tabContent}
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		fmt.Println("Error running program:", err)
